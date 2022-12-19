@@ -42,18 +42,18 @@ public class UserServiceImpl implements UserService {
     public UserDTO findById(long id) {
         Optional<User> result = repository.findOneById(id);
         if (result.isEmpty()) {
-            throw new NotFoundExceptionMapper("No existe el id: " + id + " en usuarios");
+            throw new NotFoundExceptionMapper("No existe el Id: " + id);
         }
         return mapper.toDTO(result.get());
     }
 
     public UserDTO save(UserDTO data) {
         User entity = mapper.toEntity(data);
-        log.info(data.getEmail());
         Matcher matcher = pattern.matcher(data.getEmail());
         if (!matcher.find()){
             throw new BadRequestExceptionMapper("Email inválido");}
-        emailService.sendEmail(new Email("Bienvenido al Programa de Leatad", entity.getEmail(), "Bienvenido"));
+        emailService.sendEmail(new Email("Bienvenido al Programa de Leatad", entity.getEmail(),
+                "Bienvenido, Empieza a acumular puntos para ganar grandiosos premios"));
         return mapper.toDTO(repository.save(entity));
     }
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> result = repository.findById(id);
 
         if (result.isEmpty()) {
-            throw new NotFoundExceptionMapper("No existe el id: " + id + " en usuarios");
+            throw new NotFoundExceptionMapper("No existe el Id: " + id);
         }
 
         User user = result.get();
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> result = repository.findById(id);
 
         if (result.isEmpty()) {
-            throw new NotFoundExceptionMapper("No existe el id: " + id + " en usuarios");
+            throw new NotFoundExceptionMapper("No existe el Id: " +id);
         }
 
         repository.deleteById(id);
