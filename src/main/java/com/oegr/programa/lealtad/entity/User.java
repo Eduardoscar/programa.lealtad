@@ -56,4 +56,8 @@ public class User {
     @UpdateTimestamp
     private Date updatedAt;
 
+    @OneToMany
+    @JoinColumn(name = "reward_id")
+    Set<Reward> rewards;
+
 }
