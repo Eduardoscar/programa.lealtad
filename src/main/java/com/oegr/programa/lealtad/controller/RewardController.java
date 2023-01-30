@@ -5,6 +5,7 @@ import com.oegr.programa.lealtad.service.RewardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class RewardController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_BUSINESS-ADMIN')")
     public RewardDTO create(@RequestBody RewardDTO data) throws Exception {
         log.info("Endpoint:/rewards - Method: POST");
         RewardDTO response = service.save(data);
@@ -30,6 +32,7 @@ public class RewardController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_BUSINESS-ADMIN')")
     public List<RewardDTO> findAll() {
         log.info("Endpoint:/rewards - Method: GET ");
         List<RewardDTO> response = service.findAll();
@@ -38,6 +41,7 @@ public class RewardController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_BUSINESS-ADMIN')")
     public RewardDTO findById(@PathVariable("id") long id) {
         log.info("Endpoint:/rewards/{} - Method: GET ", id);
         RewardDTO response = service.findById(id);
@@ -46,6 +50,7 @@ public class RewardController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_BUSINESS-ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") long id) throws Exception {
         log.info("Endpoint:/rewards/{} - Method: DELETE ", id);

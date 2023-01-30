@@ -3,7 +3,6 @@ package com.oegr.programa.lealtad.service;
 import com.oegr.programa.lealtad.dto.UserDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 

@@ -11,6 +11,7 @@ import com.oegr.programa.lealtad.service.EmailService;
 import com.oegr.programa.lealtad.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,8 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
-    private Pattern pattern = Pattern.compile("^[\\S]+@[\\S]+\\.[\\S]+$");
+    private Pattern pattern_email = Pattern.compile("^[\\S]+@[\\S]+\\.[\\S]+$");
+    private Pattern pattern_password =Pattern.compile("^(?=\\w*\\d)(?=\\w*[A-Z])(?=\\w*[a-z])\\S{8,16}$");
     private UserMapper mapper;
     private UserRepository repository;
     private EmailService emailService;
@@ -49,11 +51,19 @@ public class UserServiceImpl implements UserService {
 
     public UserDTO save(UserDTO data) {
         User entity = mapper.toEntity(data);
-        Matcher matcher = pattern.matcher(data.getEmail());
+
+        Optional<User> user = repository.findOneByEmail(data.getEmail());
+        if (user.isPresent()){
+            throw new BadRequestExceptionMapper("Email ya registardo");
+        }
+        Matcher matcher = pattern_password.matcher(data.getPassword());
         if (!matcher.find()){
-            throw new BadRequestExceptionMapper("Email inválido");}
-        emailService.sendEmail(new Email("Bienvenido al Programa de Leatad", entity.getEmail(),
-                "Bienvenido, Empieza a acumular puntos para ganar grandiosos premios"));
+            throw new BadRequestExceptionMapper("La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.");}
+
+        if (!Objects.isNull(data.getPaternalSurname())) {
+            entity.setRole("USER");
+        }
+        entity.setPassword(new BCryptPasswordEncoder().encode(entity.getPassword()));
         return mapper.toDTO(repository.save(entity));
     }
 
@@ -76,7 +86,7 @@ public class UserServiceImpl implements UserService {
             user.setMaternalSurname(data.getMaternalSurname());
         }
         if (!Objects.isNull(data.getEmail())) {
-            Matcher matcher = pattern.matcher(data.getEmail());
+            Matcher matcher = pattern_email.matcher(data.getEmail());
             if (!matcher.find()){
                 throw new BadRequestExceptionMapper("Email inválido");}
             }

@@ -2,6 +2,8 @@ package com.oegr.programa.lealtad.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,8 @@ public class Reward {
     private long Id;
 
     @Column(name = "points", nullable = false)
+    @NotEmpty(message = "Los puntos solo son positivos")
+    @Positive
     private int points;
 
     @Column(name = "created_at")
@@ -30,7 +34,7 @@ public class Reward {
     private Date createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 }
